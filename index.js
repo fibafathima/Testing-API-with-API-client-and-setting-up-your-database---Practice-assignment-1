@@ -39,6 +39,40 @@ const app = express();
 const port = 3010;
 
 app.use(express.static('static'));
+app.use (express.json())
+
+const students =[
+  {student_id: '1',name: 'John',marks:{math:90,science:70,english:100,history:50,geography:100},total:410}
+  ,
+  {student_id: '2',name: 'Alice',marks:{math:80,science:90,english:85,history:80,geography:95},total:433}
+  ,
+  {student_id: '3',name: 'Bob',marks:{math:70,science:80,english:90,history:70,geography:84},total:399}
+  ,
+  {student_id: '4',name: 'Charlie',marks:{math:95,science:95,english:95,history:95,geography:95},total:490}
+  ,
+  {student_id: '5',name: 'David',marks:{math:85,science:85,english:95,history:85,geography:90},total:420}
+  ,
+  {student_id: '6',name: 'Eve',marks:{math:75,science:85,english:90,history:75,geography:50},total:385}
+ ,
+
+]
+
+app.post('/students/above-threshold', (req, res) => {
+  const {threshold}= req.body
+  
+  if (typeof threshold!== 'number' || threshold < 0 ){
+    return res.status(400).json({ error: 'Invalid threshold value' });
+    }
+
+    const filteredStudents = students.filter(student => student.total > threshold)
+
+    const response = {
+      count: filteredStudents.length,
+      students: filteredStudents.map(student => ({name: student.name,total: student.total}))
+    }
+    res.json(response);
+
+})
 
 app.get('/', (req, res) => {
   res.sendFile(resolve(__dirname, 'pages/index.html'));
